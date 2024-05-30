@@ -11,6 +11,7 @@ class Product:
         self.price = float(price)
         self.quantity = float(qty)
         self.active = True
+        self.promotion = None
 
     # Getter function for quantity.
     def get_quantity(self):
@@ -31,19 +32,30 @@ class Product:
     def deactivate(self):
         self.active = False
 
+    def set_promotion(self, promotion):
+        self.promotion = promotion
+
+    def get_promotion(self):
+        return self.promotion
+
     # returns a string with the product info
     def show(self):
-        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+        promo_text = f"Promotion: {self.promotion.name}" if self.promotion else "No promotion"
+        return f"Product: {self.name}, Price: ${self.price}, Quantity: {self.quantity}, {promo_text}"
 
     # Buys a given quantity of the product. Returns the total price (float) of the purchase.
     # Updates the quantity of the product.
     def buy(self, quantity):
         if quantity > self.quantity:
             raise ValueError("Attempt to purchase more than available stock.")
-        self.set_quantity(self.quantity - quantity)
-        if self.quantity == 0:
-            self.deactivate()
-        return quantity * self.price
+        if self.promotion:
+            total_price = self.promotion.apply_promotion(self, quantity)
+        else:
+            self.set_quantity(self.quantity - quantity)
+            if self.quantity == 0:
+                self.deactivate()
+            total_price = quantity * self.price
+        return total_price
 
 
 class NonStockedProduct(Product):

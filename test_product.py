@@ -1,6 +1,7 @@
 '''Contains all tests for the product class'''
 import pytest
 from products import Product
+from promotions import PercentageDiscount, SecondItemHalfPrice, BuyTwoGetOneFree
 
 def test_create_normal_product():
     product = Product("Widget", 10.00, 100)
@@ -34,6 +35,25 @@ def test_buying_more_than_exists_raises_exception():
     product = Product("Gadget", 20.00, 10)
     with pytest.raises(Exception):  # Assuming an Exception is raised for over-purchasing
         product.buy(20)
+
+def test_percentage_discount():
+    product = Product("Widget", 10.00, 100)
+    promotion = PercentageDiscount("20% off", 20)
+    product.set_promotion(promotion)
+    assert product.buy(5) == 40.00  # 20% off 50
+
+def test_second_item_half_price():
+    product = Product("Gadget", 20.00, 100)
+    promotion = SecondItemHalfPrice("Second item half price")
+    product.set_promotion(promotion)
+    assert product.buy(3) == 50.00  # 2 full price, 1 half price
+
+def test_buy_two_get_one_free():
+    product = Product("Thingamajig", 15.00, 100)
+    promotion = BuyTwoGetOneFree("Buy 2, get 1 free")
+    product.set_promotion(promotion)
+    assert product.buy(3) == 30.00  # 2 full price, 1 free
+
 
 
 pytest.main()
