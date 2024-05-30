@@ -44,14 +44,3 @@ class Store:
             except ValueError as e:
                 print(e)  # This will print error messages like the one for exceeding maximum purchase amounts
         return total_order_price
-
-#
-# product_list = [products.Product("MacBook Air M2", price=1450, qty=100),
-#                 products.Product("Bose QuietComfort Earbuds", price=250, qty=500),
-#                 products.Product("Google Pixel 7", price=500, qty=250),
-#                ]
-#
-# store = Store(product_list)
-# products = store.get_all_products()
-# print(store.get_total_quantity())
-# print(store.order([(products[0], 1), (products[1], 2)]))
