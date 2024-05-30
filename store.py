@@ -17,6 +17,8 @@ class Store:
     def get_total_quantity(self):
         total_qty = 0
         for product in self.list_of_products:
+            if isinstance(product, products.NonStockedProduct):
+                continue  # Skip non-stocked products in quantity total
             total_qty += int(product.get_quantity())
         return total_qty
 
@@ -33,20 +35,23 @@ class Store:
     def order(self, shopping_list):
         total_order_price = 0
         for item in shopping_list:
-            product, quantity = item  # corrected unpacking here
-            if product in self.list_of_products:
-                total_order_price += product.buy(quantity)
-            else:
-                print(f"Product '{product}' not found in the store.")
+            product, quantity = item
+            try:
+                if product in self.list_of_products:
+                    total_order_price += product.buy(quantity)
+                else:
+                    print(f"Product '{product.name}' not found in the store.")
+            except ValueError as e:
+                print(e)  # This will print error messages like the one for exceeding maximum purchase amounts
         return total_order_price
 
-
-product_list = [products.Product("MacBook Air M2", price=1450, qty=100),
-                products.Product("Bose QuietComfort Earbuds", price=250, qty=500),
-                products.Product("Google Pixel 7", price=500, qty=250),
-               ]
-
-store = Store(product_list)
-products = store.get_all_products()
-print(store.get_total_quantity())
-print(store.order([(products[0], 1), (products[1], 2)]))
+#
+# product_list = [products.Product("MacBook Air M2", price=1450, qty=100),
+#                 products.Product("Bose QuietComfort Earbuds", price=250, qty=500),
+#                 products.Product("Google Pixel 7", price=500, qty=250),
+#                ]
+#
+# store = Store(product_list)
+# products = store.get_all_products()
+# print(store.get_total_quantity())
+# print(store.order([(products[0], 1), (products[1], 2)]))

@@ -1,16 +1,18 @@
-# the user interface
 import products
 import store
 
 # setup initial stock of inventory
-product_list = [ products.Product("MacBook Air M2", price=1450, qty=100),
-                 products.Product("Bose QuietComfort Earbuds", price=250, qty=500),
-                 products.Product("Google Pixel 7", price=500, qty=250)
-               ]
+product_list = [
+    products.Product("MacBook Air M2", price=1450, qty=100),
+    products.Product("Bose QuietComfort Earbuds", price=250, qty=500),
+    products.Product("Google Pixel 7", price=500, qty=250),
+    products.NonStockedProduct("Windows License", price=125),
+    products.LimitedProduct("Shipping", price=10, qty=250, maximum=1)
+]
 best_buy = store.Store(product_list)
 
 def start(store):
-    print(f'''  Store Menu
+    print('''  Store Menu
               ----------
         1. List all products in store
         2. Show total amount in store
@@ -24,12 +26,11 @@ def start(store):
             for i, product in enumerate(all_products, 1):
                 print(f"{i}. {product.show()}")
         elif user_choice == "2":
-            print(store.get_total_quantity())
+            print("Total items in store:", store.get_total_quantity())
         elif user_choice == "3":
+            shopping_list = []
             while True:
                 print("When you want to finish order, enter empty text.")
-                shopping_list = []
-                active_products = store.get_all_products()
                 product_index = input("Which product # do you want? ")
                 if not product_index:
                     break
@@ -39,6 +40,7 @@ def start(store):
                 try:
                     product_index = int(product_index)
                     quantity = int(quantity)
+                    active_products = store.get_all_products()
                     if product_index <= 0 or product_index > len(active_products):
                         raise ValueError("Invalid product index")
                     selected_product = active_products[product_index - 1]
@@ -49,11 +51,15 @@ def start(store):
                 except ValueError as e:
                     print("Error:", e)
                     continue
-                else:
-                    store.order(shopping_list)
-                    break
+
+            if shopping_list:
+                total_price = store.order(shopping_list)
+                print(f"Total amount of your purchase is: ${total_price:.2f}")
+            else:
+                print("No items were ordered.")
         elif user_choice == "4":
+            print("Thank you for using the store.")
             break
 
-
-start(best_buy)
+if __name__ == "__main__":
+    start(best_buy)
